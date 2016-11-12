@@ -77,6 +77,18 @@ SecureString SecureString::SubStr(unsigned int index, unsigned int len) const
 	return SecureString(&(*arrayPtr).Get()[index], len);
 }
 
+bool SecureString::Equals(const SecureString& str)
+{
+	if(GetStr() == str.GetStr())
+		return true;
+
+	if(str.GetLength() == GetLength() &&
+		memcmp(str.GetStr(), GetStr(), GetLength()) == 0)
+		return true;
+	else
+		return false;
+}
+
 uint8_t SecureString::AtIndex(unsigned int index) const
 {
 	if(index >= GetBufferLength())
@@ -136,6 +148,16 @@ uint8_t& SecureString::operator[] (unsigned int index)
 		throw std::runtime_error("Index out of bounds.");
 
 	return GetStr()[index];
+}
+
+bool SecureString::operator== (const SecureString& str)
+{
+	return Equals(str);
+}
+
+bool SecureString::operator!= (const SecureString& str)
+{
+	return !Equals(str);
 }
 
 unsigned int SecureString::CalcAllocateSize(unsigned int n)

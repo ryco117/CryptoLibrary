@@ -18,6 +18,7 @@ public:
 	void ReplaceAt(unsigned int index, SecureString str);
 	void PullFrom(SecureString& str);
 	SecureString SubStr(unsigned int index, unsigned int len) const;
+	bool Equals(const SecureString& str);
 	uint8_t AtIndex(unsigned int index) const;
 	void Clear();
 	void ResizeToFit(unsigned int newLength);
@@ -31,6 +32,8 @@ public:
 
 	SecureString& operator<< (SecureString& str);
 	uint8_t& operator[] (unsigned int index);
+	bool operator== (const SecureString& str);
+	bool operator!= (const SecureString& str);
 	SecureString& operator= (SecureString) = delete;
 
 protected:

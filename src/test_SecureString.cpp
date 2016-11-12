@@ -15,8 +15,11 @@ int main()
 	str.Append(SecureString(&exc, 1));
 	str.Append(exc);
 	str.Append("\t:D");
-
 	str.ReplaceAt(15, "D:");
+
+	cout << (str == SecureString("Hello! W0RLD!!\tD:") ? "Equivalence: Pass" : "Equivalence: Fail") << endl;
+//	cout << SecureString(0).GetLength() << endl;
+	cout << (SecureString() == SecureString("") ? "Empty Equivalence: Pass" : "Empty Equivalence: Fail") << endl;
 	str.ReplaceAt(str.GetLength(),
 	"\n()()()()()*\
 	\n()()()()*()\
@@ -28,10 +31,6 @@ int main()
 	pullFrom << test;
 	str.Append(pullFrom);
 
-	std::cout << str.GetStr() << std::endl;
-
-	SecureArray<32> key;
-	std::cout << key.Size() << std::endl;
-
+	cout << str.GetStr() << endl << str.GetLength() << " / " << str.GetBufferLength() << endl;
 	return 0;
 }

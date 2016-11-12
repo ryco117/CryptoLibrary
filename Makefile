@@ -8,13 +8,15 @@ OBJECTS-NI=AES.o AES-NI.o $(OBJECTS-BASE)
 OBJECTS-NO-NI=AES-NO-NI.o $(OBJECTS-BASE)
 
 make: ./lib/libcryptolibrary.a
-	cp ./src/*.h ./include/
+	mkdir -p ./include
+	cp -f ./src/*.h ./include/
 
 no-ni: ./lib/libcryptolibrary-no-ni.a
 
 all: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a tests
 
 tests: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a
+	mkdir -p ./bin
 	$(CXX) -o ./bin/test_AES ./src/test_AES.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
 	$(CXX) -o ./bin/test_SecureString ./src/test_SecureString.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
 	$(CXX) -o ./bin/test_RLWE ./src/test_RLWE.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
@@ -22,16 +24,18 @@ tests: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a
 
 install:
 	mkdir -p $(PREFIX)/include/crypto
-	cp ./lib/* $(PREFIX)/lib/
-	cp -r ./include/* $(PREFIX)/include/crypto/
+	cp -f ./lib/* $(PREFIX)/lib/
+	cp -f ./include/* $(PREFIX)/include/crypto/
 
 clean:
 	rm -f *.o ./lib/*.a
 
 ./lib/libcryptolibrary.a: $(OBJECTS-NI)
+	mkdir -p ./lib
 	ar rvs ./lib/libcryptolibrary.a $(OBJECTS-NI)
 
 ./lib/libcryptolibrary-no-ni.a: $(OBJECTS-NO-NI)
+	mkdir -p ./lib
 	ar rvs ./lib/libcryptolibrary-no-ni.a $(OBJECTS-NO-NI)
 
 ./AES-NI.o: ./src/AES.asm
@@ -62,4 +66,4 @@ clean:
 	$(CXX) -c --std=c++11 -o ./SecureString.o ./src/SecureString.cpp -fPIC -I./src
 
 ./RLWE.o : ./src/RLWE.cpp
-	$(CXX) -c --std=c++11 -o ./RLWE.o ./src/RLWE.cpp -fPIC -I./src -lscrypt
+	$(CXX) -c --std=c++11 --static -o ./RLWE.o ./src/RLWE.cpp -fPIC -I./src -lscrypt
