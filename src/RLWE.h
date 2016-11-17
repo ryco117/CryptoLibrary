@@ -13,18 +13,19 @@ namespace RLWE
 
 		static const unsigned int scalarModulus = 12289;
 		static const unsigned int polynomialModulus = 1024;
-		static const unsigned int reconciliationLength = polynomialModulus / 8;
+		static const unsigned int sharedKeyLength = (polynomialModulus / 4) / 8;	// 4 coefficients per bit, 8 bits per byte
+		static const unsigned int reconciliationLength = sharedKeyLength * 8;		// 8 rec. bits per key bit
 
 		static Polynomial RandomPolynomial(FortunaPRNG& fprng);
 		static Polynomial ErrorPolynomial(FortunaPRNG& fprng);
 
 		void Reconcile(
-			const std::array<uint8_t, reconciliationLength>& scheme,
-			SecureArray<reconciliationLength>& reconciliationOut,
+			const std::array<uint8_t, reconciliationLength>& reconciliation,
+			SecureArray<sharedKeyLength>& keyOut,
 			FortunaPRNG& fprng) const;
 		void CreateSchemeAndReconcile(
-			std::array<uint8_t, reconciliationLength>& schemeOut,
-			SecureArray<reconciliationLength>& reconciliationOut,
+			std::array<uint8_t, reconciliationLength>& reconciliationOut,
+			SecureArray<sharedKeyLength>& keyOut,
 			FortunaPRNG& fprng) const;
 		uint16_t At(unsigned int exponent) const;
 		void Print() const;
@@ -50,14 +51,14 @@ namespace RLWE
 	void CreateSharedKey(
 		const Polynomial& privateKey,
 		const Polynomial& publicKey,
-		const std::array<uint8_t, 128>& scheme,
-		SecureArray<Polynomial::reconciliationLength>& reconciliationOut,
+		const std::array<uint8_t, Polynomial::reconciliationLength>& reconciliation,
+		SecureArray<Polynomial::sharedKeyLength>& sharedKeyOut,
 		FortunaPRNG& fprng);
 
 	void CreateSharedKeyAndReconciliation(
 		const Polynomial& privateKey,
 		const Polynomial& publicKey,
-		std::array<uint8_t, 128>& schemeOut,
-		SecureArray<Polynomial::reconciliationLength>& reconciliationOut,
+		std::array<uint8_t, Polynomial::reconciliationLength>& reconciliationOut,
+		SecureArray<Polynomial::sharedKeyLength>& sharedKeyOut,
 		FortunaPRNG& fprng);
 }

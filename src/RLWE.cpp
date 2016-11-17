@@ -11,31 +11,49 @@ namespace
 		return 2 * x + fprng.Decision();
 	}
 
-	// round: Z_2q -> Z_2
-	uint8_t round(uint16_t x)
+	void round(double& x0, double& x1, double& x2, double& x3)
 	{
-		const int q = RLWE::Polynomial::scalarModulus;
-		return static_cast<uint8_t>((2 * x + q / 2) / q) % 2;
+		x0 = std::round(x0);
+		x1 = std::round(x1);
+		x2 = std::round(x2);
+		x3 = std::round(x3);
 	}
 
-	// round_2: Z_q -> Z_2
-	uint8_t round_2(uint16_t x, FortunaPRNG& fprng)
+	bool Decode(const double& x0, const double& x1, const double& x2, const double& x3)
 	{
-		return round(randDbl(x, fprng));
+		double r0 = x0;
+		double r1 = x1;
+		double r2 = x2;
+		double r3 = x3;
+		round(r0, r1, r2, r3);
+
+		return std::abs(x0 - r0) + std::abs(x1 - r1) + std::abs(x2 - r2) + std::abs(x3 - r3) > 1;
 	}
 
-	// crossround: Z_2q -> Z_2
-	uint8_t crossround(uint16_t x)
-	{
-		const int q = RLWE::Polynomial::scalarModulus;
-		return static_cast<uint8_t>(4 * x / q) % 2;
-	}
+	bool CVP(const double& x0, const double& x1, const double& x2, const double& x3, uint8_t& recByteOut)
+        {
+                double r0 = x0;
+                double r1 = x1;
+                double r2 = x2;
+                double r3 = x3;
+                round(r0, r1, r2, r3);
 
-	// crossround_2: Z_q -> Z_2
-	uint8_t crossround_2(uint16_t x, FortunaPRNG& fprng)
-	{
-		return crossround(randDbl(x, fprng));
-	}
+		double s0 = x0 - 0.5;
+                double s1 = x1 - 0.5;
+                double s2 = x2 - 0.5;
+                double s3 = x3 - 0.5;
+                round(s0, s1, s2, s3);
+
+                bool k = std::abs(x0 - r0) + std::abs(x1 - r1) + std::abs(x2 - r2) + std::abs(x3 - r3) > 1;
+		if(k)
+		{
+			uint8_t a = s0 - s3;
+			uint8_t b = s1 - s3;
+			uint8_t c = s2 - s3;
+			uint8_t d = (uint8_t)k + 2*s3;
+			
+		}
+        }
 }
 
 namespace RLWE
@@ -43,7 +61,7 @@ namespace RLWE
 	Polynomial Polynomial::RandomPolynomial(FortunaPRNG& fprng)
 	{
 		Polynomial poly;
-		fprng.GenerateBlocks(poly.coefficients.Get(), polynomialModulus/8);
+		fprng.GenerateBlocks(poly.coefficients.Get(), (polynomialModulus*sizeof(uint16_t))/16);
 
 		for(unsigned int i = 0; i < polynomialModulus; i++)
 		{
@@ -57,56 +75,44 @@ namespace RLWE
 		Polynomial error;
 		for(unsigned int i = 0; i < polynomialModulus; i++)
 		{
-			uint16_t j = 0;
-			while(fprng.Decision() && j < 12){j++;}
-
-			if(j != 0)
-				error[i] = fprng.Decision() ? j : scalarModulus - j;
+			int t = 0;
+			for(unsigned int j = 0; j < 16; j++)
+			{
+				t += fprng.Decision() - fprng.Decision();
+			}
+			error[i] = (t + scalarModulus) % scalarModulus;
 		}
 		return std::move(error);
 	}
 
 	void Polynomial::Reconcile(
-		const std::array<uint8_t, Polynomial::reconciliationLength>& scheme,
-		SecureArray<Polynomial::reconciliationLength>& reconciliationOut,
+		const std::array<uint8_t, Polynomial::reconciliationLength>& reconciliation,
+		SecureArray<Polynomial::sharedKeyLength>& keyOut,
 		FortunaPRNG& fprng) const
 	{
-		reconciliationOut.Zero();
-		for(unsigned int c = 0; c < polynomialModulus; c++)
+		keyOut.Zero();
+		for(unsigned int i = 0; i < sharedKeyLength; i++)
 		{
-			uint16_t coefficient = At(c);
-			if((scheme[c / 8] >> (c % 8)) % 2)
-			{
-				std::cout << coefficient << " - Scheme 1 - ";
-				if(round((coefficient + scalarModulus/8) % scalarModulus))
-				{
-					std::cout << "1\n";
-					reconciliationOut[c / 8] |= 1 << (c % 8);
-				}
-				else
-				{
-					std::cout << "0\n";
-				}
-			}
-			else if(round((coefficient + scalarModulus - scalarModulus/8) % scalarModulus))
-			{
-				std::cout << coefficient << " - Scheme 0 - 1\n";
-				reconciliationOut[c / 8] |= 1 << (c % 8);
-			}
-			else
-			{
-				std::cout << coefficient << " - Scheme 0 - 0\n";
-			}
+			unsigned int j = i * 32;
+			double x0 = At(j++)/scalarModulus;
+			double x1 = At(j++)/scalarModulus;
+			double x2 = At(j++)/scalarModulus;
+			double x3 = At(j++)/scalarModulus;
+
+			x0 = At(j+0)/scalarModulus;
+                        double x1 = At(j+1)/scalarModulus;
+                        double x2 = At(j+2)/scalarModulus;
+                        double x3 = At(j+3)/scalarModulus;
 		}
 	}
 
 	void Polynomial::CreateSchemeAndReconcile(
-		std::array<uint8_t, Polynomial::reconciliationLength>& schemeOut,
-		SecureArray<Polynomial::reconciliationLength>& reconciliationOut,
+		std::array<uint8_t, Polynomial::reconciliationLength>& reconciliationOut,
+		SecureArray<Polynomial::sharedKeyLength>& keyOut,
 		FortunaPRNG& fprng) const
 	{
-		reconciliationOut.Zero();
-		schemeOut.fill(0);
+		reconciliationOut.fill(0);
+		keyOut.Zero();
 
 		for(unsigned int c = 0; c < polynomialModulus; c++)
 		{
