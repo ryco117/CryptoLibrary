@@ -315,7 +315,7 @@ namespace
 
 	void Key256TwoMat4(const SecureArray<32>& key, mat4& lower, mat4& upper)
 	{
-		const uint8_t* keyPtr = key.Get();
+		const uint8_t* keyPtr = key.GetConst();
 		int i = 0;
 		for(int col = 0; col < 4; col++)
 		{
@@ -343,9 +343,9 @@ void AES::Encrypt(const uint8_t* plaintext, const unsigned int length,
 	if(AESNI())
 	{
 		#ifdef WINDOWS
-			EncryptWin(plaintext, length, iv.data(), key.Get(), ciphertextOut, usePKCS7Padding);
+			EncryptWin(plaintext, length, iv.data(), key.GetConst(), ciphertextOut, usePKCS7Padding);
 		#else
-			EncryptNix(plaintext, length, iv.data(), key.Get(), ciphertextOut, usePKCS7Padding);
+			EncryptNix(plaintext, length, iv.data(), key.GetConst(), ciphertextOut, usePKCS7Padding);
 		#endif
 		return;
 	}
@@ -421,9 +421,9 @@ unsigned int AES::Decrypt(const uint8_t* ciphertext, const unsigned int length, 
 	if(AESNI())
 	{
 		#ifdef WINDOWS
-			unsigned int l = DecryptWin(ciphertext, length, iv.data(), key.Get(), plaintextOut, expectPKCS7Padding);
+			unsigned int l = DecryptWin(ciphertext, length, iv.data(), key.GetConst(), plaintextOut, expectPKCS7Padding);
 		#else
-			unsigned int l = DecryptNix(ciphertext, length, iv.data(), key.Get(), plaintextOut, expectPKCS7Padding);
+			unsigned int l = DecryptNix(ciphertext, length, iv.data(), key.GetConst(), plaintextOut, expectPKCS7Padding);
 		#endif
 		if(l == static_cast<unsigned int>(-1) && expectPKCS7Padding)
 			throw std::runtime_error("Error occured in decryption: assembly");
@@ -436,7 +436,7 @@ unsigned int AES::Decrypt(const uint8_t* ciphertext, const unsigned int length, 
 	mat4 state;
 	mat4 nextIv;
 
-	mat4 keys[15] = {mat4(key.Get()), mat4(&key.Get()[16])};
+	mat4 keys[15] = {mat4(key.GetConst()), mat4(&key.GetConst()[16])};
 
 	for(int i = 2; i < 15; i++)
 		keys[i] = NextRound(keys, i);

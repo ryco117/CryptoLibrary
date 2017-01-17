@@ -20,10 +20,10 @@ all: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a tests
 
 tests: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a
 	mkdir -p ./bin
-	$(CXX) -o ./bin/test_AES ./src/test_AES.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
-	$(CXX) -o ./bin/test_SecureString ./src/test_SecureString.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
+	$(CXX) -o ./bin/test_AES -O0 ./src/test_AES.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
+	$(CXX) -o ./bin/test_SecureString -O2 ./src/test_SecureString.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
 	$(CXX) -o ./bin/test_RLWE ./src/test_RLWE.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
-	$(CXX) -o ./bin/test_Fortuna ./src/test_Fortuna.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
+	$(CXX) -o ./bin/test_Fortuna -O2 ./src/test_Fortuna.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
 
 install:
 	mkdir -p $(PREFIX)/include/crypto
@@ -45,7 +45,7 @@ clean:
 	nasm -f elf64 -o AES-NI.o ./src/AES.asm
 
 ./AES.o: ./src/AES.cpp
-	$(CXX) -std=c++11 -c -o ./AES.o ./src/AES.cpp -fPIC
+	$(CXX) -std=c++11 -c -o ./AES.o -O2 ./src/AES.cpp -fPIC
 
 ./AES-NO-NI.o: ./src/AES.cpp
 	$(CXX) -std=c++11 -c -o ./AES-NO-NI.o -O2 ./src/AES.cpp -DNO_NI -fPIC
@@ -63,10 +63,10 @@ clean:
 	$(CXX) --std=c++11 --static -c -o ./fortuna.o -O2 ./src/Fortuna.cpp -lscrypt -fPIC -I./src/
 
 ./SecureFixedLengthArray.o: ./src/SecureFixedLengthArray.cpp
-	$(CXX) -c --std=c++11 -o ./SecureFixedLengthArray.o ./src/SecureFixedLengthArray.cpp -fPIC -I./src
+	$(CXX) -c --std=c++11 -o ./SecureFixedLengthArray.o -O2 ./src/SecureFixedLengthArray.cpp -fPIC -I./src
 
 ./SecureString.o: ./src/SecureString.cpp
-	$(CXX) -c --std=c++11 -o ./SecureString.o ./src/SecureString.cpp -fPIC -I./src
+	$(CXX) -c --std=c++11 -o ./SecureString.o -O2 ./src/SecureString.cpp -fPIC -I./src
 
 ./RLWE.o : ./src/RLWE.cpp
 	$(CXX) -c --std=c++11 --static -o ./RLWE.o ./src/RLWE.cpp -fPIC -I./src -lscrypt

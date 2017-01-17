@@ -2,7 +2,6 @@
 #include <memory>
 #include <stdint.h>
 
-
 class SecureFixedLengthArray
 {
 public:
@@ -14,7 +13,7 @@ public:
 	uint8_t& operator[] (unsigned int index);
 
 	uint8_t* Get();
-	const uint8_t* Get() const;
+	const uint8_t* GetConst() const;
 	const unsigned int Size() const;
 	void Zero();
 private:

@@ -32,7 +32,7 @@ SecureFixedLengthArray::SecureFixedLengthArray(const SecureFixedLengthArray& arr
 {
 	if(size > 0)
 	{
-		memcpy(ptr.get(), array.Get(), size);
+		memcpy(ptr.get(), array.GetConst(), size);
 	}
 }
 
@@ -65,7 +65,7 @@ uint8_t* SecureFixedLengthArray::Get()
 	return ptr.get();
 }
 
-const uint8_t* SecureFixedLengthArray::Get() const
+const uint8_t* SecureFixedLengthArray::GetConst() const
 {
 	return ptr.get();
 }

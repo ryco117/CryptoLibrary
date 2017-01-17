@@ -140,7 +140,7 @@ namespace RLWE
 
 	uint16_t Polynomial::At(unsigned int exponent) const
 	{
-		const uint16_t* coefficientPtr = reinterpret_cast<const uint16_t*>(coefficients.Get());
+		const uint16_t* coefficientPtr = reinterpret_cast<const uint16_t*>(coefficients.GetConst());
 		return coefficientPtr[exponent % polynomialModulus];
 	}
 
@@ -264,7 +264,7 @@ namespace RLWE
 			}
 		}
 
-		memcpy(coefficients.Get(), poly.coefficients.Get(), coefficients.Size());
+		memcpy(coefficients.Get(), poly.coefficients.GetConst(), coefficients.Size());
 		return *this;
 	}
 
@@ -276,7 +276,7 @@ namespace RLWE
 
 	bool Polynomial::operator==(const Polynomial& rhs) const
 	{
-		return memcmp(coefficients.Get(), rhs.coefficients.Get(), coefficients.Size()) == 0;
+		return memcmp(coefficients.GetConst(), rhs.coefficients.GetConst(), coefficients.Size()) == 0;
 	}
 
 	Polynomial::Polynomial()

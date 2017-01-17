@@ -21,7 +21,7 @@ int main()
 		return -1;
 	}
 
-	const bool pad = false;
+	const bool pad = true;
 	const unsigned int cipherLength = pad ? PaddedSize(Message.size()) :
 		(PaddedSize(Message.size()) - Message.size() == 16 ? Message.size() : PaddedSize(Message.size()) );
 	std::cout << "Plaintext: " << Message << std::endl;
@@ -30,6 +30,6 @@ int main()
 
 	int len = Decrypt(buff, cipherLength, IV, key, buff, pad);
 	std::cout << "Decrypted: " << buff << std::endl;
-	std::cout << "String Length: " << strlen(reinterpret_cast<const char*>(buff)) << ", " << len << std::endl;
+	std::cout << "String Length: " << Message.size() << ", " << len << std::endl;
 	return 0;
 }

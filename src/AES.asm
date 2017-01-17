@@ -19,6 +19,7 @@ section .text
 AESNI:
 	xor rax, rax
 	xor rcx, rcx
+	push rbx
 	cpuid
 	cmp rax, 1
 	jl AESNI_False
@@ -29,9 +30,11 @@ AESNI:
 	jz AESNI_False
 AESNI_True:
 	mov rax, 1
+	pop rbx
 	ret
 AESNI_False:
 	mov rax, 0
+	pop rbx
 	ret
 
 	;rax = src, rbx = dest, rcx = size
@@ -59,9 +62,11 @@ Zero_Loop:
 
 	;void Encrypt(const uint8_t* plaintext, const unsigned int size, const uint8_t* IV, const uint8_t* key, uint8_t* ciphertextOut, BOOL usePKCS7Pad /*Instead of zeros as needed*/)
 EncryptNix:
+	push rbx							;preserve nonvolatile
 	mov rbx, rsi							;Get second parameter (Text Size)
 	mov rax, rdi							;Get first parameter (Plaintext Ptr)
 	call AESEncrypt
+	pop rbx
 	ret
 EncryptWin:
     push rbx                                ;Preserve windows non-volatile
@@ -235,9 +240,11 @@ AESEncrypt_Finish:
 
 	;int Decrypt(const uint8_t* ciphertext, const unsigned int size, const uint8_t* IV, const uint8_t* key, uint8_t* plaintextOut, BOOL expectPKCS7Pad /*Instead of zeros as needed*/)
 DecryptNix:
+	push rbx
 	mov rbx, rsi							;Get second parameter (Text Size)
 	mov rax, rdi							;Get first parameter (Plaintext Ptr)
 	call AESDecrypt
+	pop rbx
 	ret
 DecryptWin:
     push rbx
