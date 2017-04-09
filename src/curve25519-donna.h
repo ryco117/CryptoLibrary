@@ -12,6 +12,7 @@ typedef uint8_t u8;
 typedef int32_t s32;
 typedef int64_t limb;
 
+const char* getcurve25519License();
 int curve25519_donna(u8 *mypublic, const u8 *secret, const u8 *basepoint);
 
 #endif

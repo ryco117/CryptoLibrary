@@ -13,6 +13,7 @@ make: ./lib/libcryptolibrary.a
 
 no-ni: ./lib/libcryptolibrary-no-ni.a
 	mkdir -p ./include
+	cp -f ./src/*.h ./include/
 
 all: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a tests
 	mkdir -p ./include
