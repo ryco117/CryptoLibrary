@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 SecureString::SecureString() :
-	length(0), arrayPtr(new SecureFixedLengthArray(0)) {}
+	length(0), arrayPtr(new SecureFixedLengthArray(16)) {}
 
 SecureString::SecureString(const char* cstr) :
 	SecureString(cstr, strlen(cstr)) {}

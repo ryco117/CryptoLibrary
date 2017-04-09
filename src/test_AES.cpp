@@ -21,7 +21,7 @@ int main()
 		return -1;
 	}
 
-	const bool pad = true;
+	const bool pad = false;
 	const unsigned int cipherLength = pad ? PaddedSize(Message.size()) :
 		(PaddedSize(Message.size()) - Message.size() == 16 ? Message.size() : PaddedSize(Message.size()) );
 	std::cout << "Plaintext: " << Message << std::endl;

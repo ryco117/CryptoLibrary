@@ -265,14 +265,14 @@ namespace
 			}
 		}
 
-		void AddRoundKey(mat4 RoundKey)
+		void AddRoundKey(const mat4& RoundKey)
 		{
 			for(int col = 0; col < 4; col++)
 				for(int row = 0; row < 4; row++)
 					p[col][row] = p[col][row] ^ RoundKey.p[col][row];
 		}
 
-		mat4& operator= (const mat4 Src)
+		mat4& operator= (const mat4& Src)
 		{
 			for(int col = 0; col < 4; col++)
 				for(int row = 0; row < 4; row++)
@@ -281,7 +281,7 @@ namespace
 			return *this;
 		}
 
-		bool operator== (const mat4 Src)
+		bool operator== (const mat4& Src)
 		{
 			for(int col = 0; col < 4; col++)
 				for(int row = 0; row < 4; row++)
@@ -292,7 +292,7 @@ namespace
 		}
 	};
 
-	inline mat4 NextRound(mat4 Key[15], int round)
+	inline mat4 NextRound(const mat4 Key[15], int round)
 	{
 		mat4 NewRound = mat4((unsigned char)0);
 		if(round % 2 == 0)
@@ -421,11 +421,11 @@ unsigned int AES::Decrypt(const uint8_t* ciphertext, const unsigned int length, 
 	if(AESNI())
 	{
 		#ifdef WINDOWS
-			unsigned int l = DecryptWin(ciphertext, length, iv.data(), key.GetConst(), plaintextOut, expectPKCS7Padding);
+			uint64_t l = DecryptWin(ciphertext, length, iv.data(), key.GetConst(), plaintextOut, expectPKCS7Padding);
 		#else
-			unsigned int l = DecryptNix(ciphertext, length, iv.data(), key.GetConst(), plaintextOut, expectPKCS7Padding);
+			uint64_t l = DecryptNix(ciphertext, length, iv.data(), key.GetConst(), plaintextOut, expectPKCS7Padding);
 		#endif
-		if(l == static_cast<unsigned int>(-1) && expectPKCS7Padding)
+		if(l == static_cast<uint64_t>(-1) && expectPKCS7Padding)
 			throw std::runtime_error("Error occured in decryption: assembly");
 
 		return l;

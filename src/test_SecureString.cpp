@@ -17,9 +17,8 @@ int main()
 	str.Append("\t:D");
 	str.ReplaceAt(15, "D:");
 
-	cout << (str == SecureString("Hello! W0RLD!!\tD:") ? "Equivalence: Pass" : "Equivalence: Fail") << endl;
-//	cout << SecureString(0).GetLength() << endl;
-	cout << (SecureString() == SecureString("") ? "Empty Equivalence: Pass" : "Empty Equivalence: Fail") << endl;
+	cout << "Equivalence: " << (str == SecureString("Hello! W0RLD!!\tD:") ? "Pass" : "Fail") << endl;
+	cout << "Empty Equivalence: " << (SecureString() == SecureString("") ? "Pass" : "Fail") << endl;
 	str.ReplaceAt(str.GetLength(),
 	"\n()()()()()*\
 	\n()()()()*()\

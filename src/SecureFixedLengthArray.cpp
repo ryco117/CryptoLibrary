@@ -38,11 +38,14 @@ SecureFixedLengthArray::SecureFixedLengthArray(const SecureFixedLengthArray& arr
 
 SecureFixedLengthArray::~SecureFixedLengthArray()
 {
-	Zero();
-	if(int err = munlock(ptr.get(), size) != 0)
+	if(size > 0)
 	{
-		throw std::runtime_error("munlock failed with return value: " +
-			std::to_string(err));
+		Zero();
+		if(int err = munlock(ptr.get(), size) != 0)
+		{
+			throw std::runtime_error("munlock failed with return value: " +
+				std::to_string(err));
+		}
 	}
 }
 
@@ -51,7 +54,11 @@ SecureFixedLengthArray& SecureFixedLengthArray::operator= (SecureFixedLengthArra
 	if(size != rhs.Size())
 		throw std::runtime_error("SecureFixedLengthArray: Cannot use assignment operator for arrays of different lengths");
 
-	memcpy(ptr.get(), rhs.Get(), size);
+	if(size)
+	{
+		memcpy(ptr.get(), rhs.Get(), size);
+	}
+
 	return *this;
 }
 
