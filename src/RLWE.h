@@ -11,10 +11,12 @@ namespace RLWE
 	public:
 		Polynomial();
 
-		static const unsigned int scalarModulus = 12289;
-		static const unsigned int polynomialModulus = 1024;
-		static const unsigned int sharedKeyLength = (polynomialModulus / 4) / 8;	// 4 coefficients per bit, 8 bits per byte
-		static const unsigned int reconciliationLength = sharedKeyLength * 8;		// 8 rec. bits per key bit
+		static const int scalarModulus = 12289;
+		static const int polynomialModulus = 1024;							    // Number of coefficients
+		static const unsigned int sharedKeyLength = (polynomialModulus / 4) / 8;// 4 coefficients per key bit, 8 bits per byte
+		static const unsigned int reconciliationLength = sharedKeyLength * 8;	// 8 rec. bits per key bit, equivalent to polynomialModulus / 4
+
+        static const unsigned int BINOMIAL_SAMPLE_COUNT = 16;                 // 2000 'virtual coin flips' to build binomial distribution
 
 		static Polynomial RandomPolynomial(FortunaPRNG& fprng);
 		static Polynomial ErrorPolynomial(FortunaPRNG& fprng);
@@ -29,7 +31,6 @@ namespace RLWE
 			FortunaPRNG& fprng) const;
 		uint16_t At(unsigned int exponent) const;
 		void Print() const;
-		uint16_t AverageDistance() const;
 
 		Polynomial operator+(const Polynomial&) const;
 	  	Polynomial operator-(const Polynomial&) const;

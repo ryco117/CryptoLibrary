@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <memory>
+#include <assert.h>
+#include <string.h>
 
 using namespace std;
 using namespace RLWE;
@@ -17,47 +19,45 @@ int main()
 	FortunaPRNG fprng;
 	fprng.Seed(seed.get(), seedLength);
 
+	const unsigned int TRIALS_COUNT = 1000;
+
 	// Generate initial polynomials
 	Polynomial basePolynomial = Polynomial::RandomPolynomial(fprng);
-	Polynomial privateKey1 = Polynomial::RandomPolynomial(fprng);
-	Polynomial privateKey2 = Polynomial::RandomPolynomial(fprng);
+	// cout << "Base Polynomial: ";
+	// basePolynomial.Print();
 
-	// Generate public keys
-	Polynomial publicKey1 = GeneratePublicKey(privateKey1, basePolynomial, fprng);
-	Polynomial publicKey2 = GeneratePublicKey(privateKey2, basePolynomial, fprng);
+    for(unsigned int i = 0; i < TRIALS_COUNT; i++)
+    {
+	    Polynomial privateKey1 = Polynomial::ErrorPolynomial(fprng);
+	    // cout << "=======================================================================\n\nPrivate Key (1): ";
+	    // privateKey1.Print();
 
-	//publicKey1.Print();
-	//cout << "=======================================================================\n";
+	    Polynomial privateKey2 = Polynomial::ErrorPolynomial(fprng);
+	    // cout << "=======================================================================\n\nPrivate Key (2): ";
+	    // privateKey2.Print();
 
-	/*cout << "PublicKey1 * PrivateKey2 equals PublicKey2 * PrivateKey1? " <<
-		((publicKey1 * privateKey2) == (publicKey2 * privateKey1)) << endl;*/
+	    // Generate public keys
+	    Polynomial publicKey1 = GeneratePublicKey(privateKey1, basePolynomial, fprng);
+	    Polynomial publicKey2 = GeneratePublicKey(privateKey2, basePolynomial, fprng);
 
-	/*cout << "PublicKey1 * PrivateKey2 equals PrivateKey2 * PublicKey1? " <<
-		((publicKey1 * privateKey2) == (privateKey2 * publicKey1)) << endl;*/		//true
+        // cout << "=======================================================================\n\nPublic Key (1): ";
+	    // publicKey1.Print();
+	    // cout << "=======================================================================\n\nPublic Key (2): ";
+	    // publicKey2.Print();
 
-	//(publicKey1 * privateKey2).Print();
-	//cout << "=======================================================================\n";
-	//(publicKey2 * privateKey1).Print();
+	    // Generate shared keys
+	    std::array<uint8_t, Polynomial::reconciliationLength> reconciliationScheme;
+	    SecureArray<32> sharedKey1;
+	    SecureArray<32> sharedKey2;
+	    CreateSharedKeyAndReconciliation(privateKey1, publicKey2, reconciliationScheme, sharedKey1, fprng);
+	    CreateSharedKey(privateKey2, publicKey1, reconciliationScheme, sharedKey2, fprng);
 
-	// Generate shared keys
-	std::array<uint8_t, Polynomial::reconciliationLength> reconciliationScheme;
-	SecureArray<128> sharedKey1;
-	SecureArray<128> sharedKey2;
-	CreateSharedKeyAndReconciliation(privateKey1, publicKey2, reconciliationScheme, sharedKey1, fprng);
-	cout << "=======================================================================\n";
-	CreateSharedKey(privateKey2, publicKey1, reconciliationScheme, sharedKey2, fprng);
+        // cout << "=======================================================================\n";
+	    // cout << "Resulting Shared Key (1): " << Base64::Encode(sharedKey1.Get(), 32) <<
+		//     "\nResulting Shared Key (2): " << Base64::Encode(sharedKey2.Get(), 32) << endl;
 
-	cout << Base64::Encode(sharedKey1.Get(), 128) << "\n" <<
-		Base64::Encode(sharedKey2.Get(), 128) << "\n";
-
-	//Polynomial random = Polynomial::RandomPolynomial(fprng);
-	//Polynomial poly; poly[0] = 1234; poly[1] = 8324;
-	//Polynomial poly = random;
-	//Polynomial error = Polynomial::ErrorPolynomial(fprng);
-	//Polynomial error; error.Print();
-	//Polynomial result = (poly * poly) - (poly * (poly + error)) + (poly * error);
-	//result.Print();
-	//cout << "Average: " << result.AverageDistance() << endl;
+	    assert(memcmp(sharedKey1.Get(), sharedKey2.Get(), 32) == 0);
+	}
 }
 
 

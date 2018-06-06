@@ -30,6 +30,6 @@ int main()
 	pullFrom << test;
 	str.Append(pullFrom);
 
-	cout << str.GetStr() << endl << str.GetLength() << " / " << str.GetBufferLength() << endl;
+	cout << endl << "String: " << str.GetStr() << endl << "String-length to allocated buffer: " << str.GetLength() << " / " << str.GetBufferLength() << endl;
 	return 0;
 }

@@ -3,7 +3,7 @@ CC=gcc
 
 PREFIX=/usr/local
 
-OBJECTS-BASE=base64.o curve25519-donna.o ecdh.o fortuna.o SecureFixedLengthArray.o SecureString.o
+OBJECTS-BASE=base64.o curve25519-donna.o ecdh.o fortuna.o SecureFixedLengthArray.o SecureString.o RLWE.o
 OBJECTS-NI=AES.o AES-NI.o $(OBJECTS-BASE)
 OBJECTS-NO-NI=AES-NO-NI.o $(OBJECTS-BASE)
 
@@ -23,7 +23,7 @@ tests: ./lib/libcryptolibrary.a ./lib/libcryptolibrary-no-ni.a
 	mkdir -p ./bin
 	$(CXX) -o ./bin/test_AES -O2 ./src/test_AES.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
 	$(CXX) -o ./bin/test_SecureString -O2 ./src/test_SecureString.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary
-	#$(CXX) -o ./bin/test_RLWE ./src/test_RLWE.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
+	$(CXX) -o ./bin/test_RLWE -O2 ./src/test_RLWE.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
 	$(CXX) -o ./bin/test_Fortuna -O2 ./src/test_Fortuna.cpp -fPIC -std=c++11 -I./src -L./lib -lcryptolibrary -lscrypt
 
 install:
@@ -70,4 +70,4 @@ clean:
 	$(CXX) -c --std=c++11 -o ./SecureString.o -O2 ./src/SecureString.cpp -fPIC -I./src
 
 ./RLWE.o : ./src/RLWE.cpp
-	$(CXX) -c --std=c++11 --static -o ./RLWE.o ./src/RLWE.cpp -fPIC -I./src -lscrypt
+	$(CXX) -c --std=c++11 --static -O2 -o ./RLWE.o ./src/RLWE.cpp -fPIC -I./src -lscrypt
