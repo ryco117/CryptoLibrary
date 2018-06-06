@@ -19,7 +19,8 @@ int main()
 	FortunaPRNG fprng;
 	fprng.Seed(seed.get(), seedLength);
 
-	const unsigned int TRIALS_COUNT = 1000;
+	const unsigned int TRIALS_COUNT = 10000;
+	float faults = 0.0;
 
 	// Generate initial polynomials
 	Polynomial basePolynomial = Polynomial::RandomPolynomial(fprng);
@@ -56,8 +57,10 @@ int main()
 	    // cout << "Resulting Shared Key (1): " << Base64::Encode(sharedKey1.Get(), 32) <<
 		//     "\nResulting Shared Key (2): " << Base64::Encode(sharedKey2.Get(), 32) << endl;
 
-	    assert(memcmp(sharedKey1.Get(), sharedKey2.Get(), 32) == 0);
+	    // assert(memcmp(sharedKey1.Get(), sharedKey2.Get(), 32) == 0);
+	    faults += (memcmp(sharedKey1.Get(), sharedKey2.Get(), 32) != 0) ? 1.0 : 0.0;
 	}
+	cout << "Calculated fault percentage after " << TRIALS_COUNT << " trials: " << 100.0*faults/float(TRIALS_COUNT) << "%\n";
 }
 
 
