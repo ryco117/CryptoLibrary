@@ -18,7 +18,6 @@ int main()
 	if(!AES_NI())
 	{
 		std::cout << "AES-NI is not supported on this CPU :(\n";
-		return -1;
 	}
 
 	const bool pad = false;
