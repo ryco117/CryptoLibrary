@@ -19,7 +19,7 @@ int main()
 	FortunaPRNG fprng;
 	fprng.Seed(seed.get(), seedLength);
 
-	const unsigned int TRIALS_COUNT = 10000;
+	const unsigned int TRIALS_COUNT = 100000;
 	float faults = 0.0;
 
 	// Generate initial polynomials

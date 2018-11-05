@@ -1,6 +1,0 @@
-[default]
-name=Default Configuration
-device=local
-runtime=host
-prefix=/home/ryan/.cache/gnome-builder/install/src/host
-default=true

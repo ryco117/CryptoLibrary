@@ -167,12 +167,6 @@ namespace
 	    const int8_t ZERO = 0; u0P = std::max(ZERO, u0P); u1P = std::max(ZERO, u1P); u2P = std::max(ZERO, u2P); u3P = std::max(ZERO, u3P);
 
         // std::cout << "AddFloor-uvst: <" << (int)u0P << "," << (int)u1P << "," << (int)u2P << "," << (int)u3P << "> ";
-
-        float xP = float(u0P+u1P - 4)/(sqrt(2.0)*4.0) + 0.5;
-		float yP = float(u1P-u0P)/(sqrt(2.0)*4.0) + 0.5;
-		float zP = float(u2P+u3P - 4)/(sqrt(2.0)*4.0) + 0.5;
-		float wP = float(u3P-u2P)/(sqrt(2.0)*4.0) + 0.5;
-
 		// std::cout << "Recovered Original: <" << xP << "," << yP << "," << zP << "," << wP << "> ";
 		// std::cout << "uvst Distance: " << sqrt(pow(x-xP, 2.0) + pow(y-yP, 2.0) + pow(z-zP, 2.0) + pow(w-wP, 2.0)) << "\n";
 
