@@ -362,21 +362,25 @@ void AES::Encrypt(const uint8_t* plaintext, const unsigned int length,
 
 	unsigned char padSize = 16 - (length % 16);
 	unsigned char padVal;
+	char paddedBlock[16];
 	if(usePKCS7Padding)
 	{
 		padVal = padSize;
+		memcpy(paddedBlock, &plaintext[length + padSize - 16], 16 - padSize);
+		memset(&paddedBlock[16 - padSize], padVal, padSize);
 	}
 	else
 	{
 		padVal = 0;
 		padSize %= 16;
+		if(padSize == 0)
+			memcpy(paddedBlock, &plaintext[length - 16], 16);
+		else
+			memcpy(paddedBlock, &plaintext[length + padSize - 16], 16 - padSize);
+		memset(&paddedBlock[16 - padSize], padVal, padSize);
 	}
 
-	char paddedBlock[16];
-	memcpy(paddedBlock, &plaintext[length + padSize - 16], 16 - padSize);
-	memset(&paddedBlock[16 - padSize], padVal, padSize);
-
-	for(unsigned int i = 0; (i * 16) <= length; i++)									//For every 16 chars, fill the state matrix again.
+	for(unsigned int i = 0; (i * 16) < (length + padSize); i++)									//For every 16 chars, fill the state matrix again.
 	{
 		if((length + padSize) - (16 * i) > 16)
 		{
@@ -435,8 +439,9 @@ unsigned int AES::Decrypt(const uint8_t* ciphertext, const unsigned int length, 
 	mat4 ivKey = mat4(iv.data());
 	mat4 state;
 	mat4 nextIv;
-
-	mat4 keys[15] = {mat4(key.GetConst()), mat4(&key.GetConst()[16])};
+        mat4 keys[15];
+	Key256TwoMat4(key, keys[0], keys[1]);
+	//mat4 keys[15] = {mat4(key.GetConst()), mat4(&key.GetConst()[16])};
 
 	for(int i = 2; i < 15; i++)
 		keys[i] = NextRound(keys, i);
