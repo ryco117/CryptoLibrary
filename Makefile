@@ -1,7 +1,7 @@
 CXX=g++
 CC=gcc
 OPTIMIZATION=-O2
-TEST_LIB=cryptolibrary-no-ni
+TEST_LIB=cryptolibrary
 
 PREFIX=/usr/local
 

@@ -87,10 +87,6 @@ namespace
         float zP = s + floatTOver2;
         float wP = floatTOver2;
 
-        // std::cout << "Point: <" << x << "," << y << "," << z << "," << w <<
-		//     "> Closest lattice: <" << xP << "," << yP << "," << zP << "," << wP << "> ";
-		// std::cout << "Distance: " << sqrt(pow(x-xP, 2.0) + pow(y-yP, 2.0) + pow(z-zP, 2.0) + pow(w-wP, 2.0)) << " -- ";
-
 		bool shaded = k > 0.0;
 		if(!shaded)
 		{
@@ -108,7 +104,6 @@ namespace
 	void ReconcileShadedCell(float x, float y, float z, float w,
 		uint8_t& rec, FortunaPRNG& fprng)
 	{
-	    // std::cout << "Point: <" << x << "," << y << "," << z << "," << w << "> ";
 	    const float v0 = 4.0*(x - 0.5);
 	    const float v1 = 4.0*(y - 0.5);
 	    const float v2 = 4.0*(z - 0.5);
@@ -117,13 +112,11 @@ namespace
 		float u1 = (v0 + v1)/sqrt(2.0);
 		float u2 = (v2 - v3)/sqrt(2.0);
 		float u3 = (v2 + v3)/sqrt(2.0);
-		// std::cout << "Rotate&ScaleTo: <" << u0 << "," << u1 << "," << u2 << "," << u3 << "> ";
 		const float f0 = floor(u0);
 	    const float f1 = floor(u1);
 	    const float f2 = floor(u2);
 	    const float f3 = floor(u3);
 	    u0 -= f0; u1 -= f1; u2 -= f2; u3 -= f3;
-	    // std::cout << "FloorTo: <" << u0 << "," << u1 << "," << u2 << "," << u3 << "> ";
 
 		const float x0 = round(u0);
 	    const float y0 = round(u1);
@@ -161,14 +154,9 @@ namespace
         int8_t u1P = v + floatTOver2;
         int8_t u2P = s + floatTOver2;
         int8_t u3P = floatTOver2;
-        // std::cout << "uvst: <" << (int)u0P << "," << (int)u1P << "," << (int)u2P << "," << (int)u3P << "> ";
 	    u0P += f0 + 2; u1P += f1 + 2; u2P += f2 + 2; u3P += f3 + 2;
 	    const int8_t THREE = 3; u0P = std::min(THREE, u0P); u1P = std::min(THREE, u1P); u2P = std::min(THREE, u2P); u3P = std::min(THREE, u3P);
 	    const int8_t ZERO = 0; u0P = std::max(ZERO, u0P); u1P = std::max(ZERO, u1P); u2P = std::max(ZERO, u2P); u3P = std::max(ZERO, u3P);
-
-        // std::cout << "AddFloor-uvst: <" << (int)u0P << "," << (int)u1P << "," << (int)u2P << "," << (int)u3P << "> ";
-		// std::cout << "Recovered Original: <" << xP << "," << yP << "," << zP << "," << wP << "> ";
-		// std::cout << "uvst Distance: " << sqrt(pow(x-xP, 2.0) + pow(y-yP, 2.0) + pow(z-zP, 2.0) + pow(w-wP, 2.0)) << "\n";
 
 		rec = u0P & 3;
 		rec <<= 2;
@@ -196,10 +184,7 @@ namespace
 		float rZ = (s+t - 4.0)/(sqrt(2.0)*4.0);
 		float rW = (t-s)/(sqrt(2.0)*4.0);
 
-        // std::cout << "Original Point: <" << x << "," << y << "," << z << "," << w << "> ";
-		// std::cout << "Reconcile Vector: <" << rX << "," << rY << "," << rZ << "," << rW << "> ";
 		x -= rX; y -= rY; z -= rZ; w -= rW;
-		// std::cout << "Shifted Point: <" << x << "," << y << "," << z << "," << w << ">\n";
 	}
 }
 
